@@ -1,10 +1,9 @@
-
 name: CI/CD for Dockerized Flask App
 
 permissions:
   contents: read
 
-on:
+"on":
   push:
     branches:
       - main
@@ -36,7 +35,7 @@ jobs:
 
   build-and-push-docker-image:
     needs: build-and-test
-    if: github.event_name == 'push'
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -50,12 +49,13 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6
         id: build_push_image
+        uses: docker/build-push-action@v6
         with:
           context: .
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/flask-app:latest
       - name: Image digest
-        run: echo "Image digest: ${{ steps.build_push_image.outputs.digest }}"
+        run: |
+          echo "Image digest: ${{ steps.build_push_image.outputs.digest }}"
 
