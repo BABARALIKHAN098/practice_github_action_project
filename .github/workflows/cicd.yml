@@ -1,6 +1,9 @@
 
 name: CI/CD for Dockerized Flask App
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:
@@ -48,12 +51,11 @@ jobs:
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
+        id: build_push_image
         with:
           context: .
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/flask-app:latest
       - name: Image digest
-        run: echo "Image digest: ${{ steps.build-and-push-docker-image.outputs.digest}}"
+        run: echo "Image digest: ${{ steps.build_push_image.outputs.digest }}"
 
-
-              
